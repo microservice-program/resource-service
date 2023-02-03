@@ -28,6 +28,10 @@ public class ResourceController {
     public HttpEntity<byte[]> getMusicById(@PathVariable Long id) {
         return resourceService.getMusicById(id);
     }
+    @GetMapping("/{id}/check")
+    public ResponseEntity<Boolean> checkMusicById(@PathVariable Long id) {
+        return ResponseEntity.ok(resourceService.checkMusicById(id));
+    }
 
     @PostMapping
     public ResponseEntity<RecordId> createResource(@RequestParam MultipartFile file) {

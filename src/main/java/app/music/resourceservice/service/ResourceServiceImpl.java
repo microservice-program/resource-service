@@ -85,12 +85,18 @@ public class ResourceServiceImpl implements ResourceService {
                 .stream()
                 .map(MusicResource::mapToDto)
                 .toList();
+        musicResourceRepo.deleteAllById(ids);
         musics.forEach(music -> {
             checkObjectExits(music.name());
             s3.deleteObject(S3_BUCKET_NAME, music.name());
             res.addElement(music.id());
         });
         return res;
+    }
+
+    @Override
+    public Boolean checkMusicById(Long id) {
+        return musicResourceRepo.findById(id).isPresent();
     }
 
     private void checkBucketExists() {

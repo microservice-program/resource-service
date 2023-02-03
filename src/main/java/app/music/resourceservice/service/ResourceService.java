@@ -13,4 +13,6 @@ public interface ResourceService {
     HttpEntity<byte[]> getMusicById(Long id);
 
     RecordIds deleteMusic(List<Long> ids);
+
+    Boolean checkMusicById(Long id);
 }
