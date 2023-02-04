@@ -49,13 +49,17 @@ public class ResourceServiceImpl implements ResourceService {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.addUserMetadata("Name", filename);
         metadata.addUserMetadata("ResourceId", String.valueOf(musicResource.getId()));
-        metadata.setContentType("audio/mpeg");
+        metadata.setContentType(file.getContentType());
         try {
-            PutObjectRequest request = new PutObjectRequest(S3_BUCKET_NAME, filename, file.getInputStream(), metadata);
-            request.setMetadata(metadata);
+            PutObjectRequest request = new PutObjectRequest(S3_BUCKET_NAME,
+                    filename,
+                    file.getInputStream(),
+                    metadata);
+            request.getRequestClientOptions().setReadLimit(1024 * 1024 * 1024);
             s3.putObject(request);
             return new RecordId(musicResource.getId());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new UnexpectedException(e.getMessage());
         }
     }
@@ -72,7 +76,7 @@ public class ResourceServiceImpl implements ResourceService {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.valueOf(contentType));
         header.setContentLength(bytes.length);
-        header.add("content-disposition", "attachment; filename=\"" + music.getName() + "\"");
+        header.add("content-disposition", "inline; filename=\"" + music.getName() + "\"");
 
         return new HttpEntity<>(bytes, header);
     }
