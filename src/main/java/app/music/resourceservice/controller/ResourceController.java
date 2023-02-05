@@ -5,6 +5,7 @@ import app.music.resourceservice.service.model.response.RecordId;
 import app.music.resourceservice.service.model.response.RecordIds;
 import app.music.resourceservice.util.RequestUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +26,7 @@ public class ResourceController {
     private final ResourceService resourceService;
 
     @GetMapping("/{id}")
-    public HttpEntity<byte[]> getMusicById(@PathVariable Long id) {
+    public InputStreamResource getMusicById(@PathVariable Long id) {
         return resourceService.getMusicById(id);
     }
     @GetMapping("/{id}/check")

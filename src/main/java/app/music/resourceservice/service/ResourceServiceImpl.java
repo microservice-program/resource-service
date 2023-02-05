@@ -15,9 +15,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -65,20 +63,12 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public HttpEntity<byte[]> getMusicById(Long id) {
+    public InputStreamResource getMusicById(Long id) {
         var music = musicResourceRepo.findById(id).orElseThrow(() -> new NotFoundException("Music not found"));
         checkBucketExists();
         checkObjectExits(music.getName());
-
         S3Object file = s3.getObject(S3_BUCKET_NAME, music.getName());
-        String contentType = file.getObjectMetadata().getContentType();
-        byte[] bytes = this.readBitmap(file);
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(MediaType.valueOf(contentType));
-        header.setContentLength(bytes.length);
-        header.add("content-disposition", "inline; filename=\"" + music.getName() + "\"");
-
-        return new HttpEntity<>(bytes, header);
+        return new InputStreamResource(file.getObjectContent());
     }
 
     @Override
