@@ -64,8 +64,8 @@ public class ResourceServiceImpl implements ResourceService {
                     filename,
                     byteArrayInputStream,
                     metadata);
-            PutObjectResult res = s3.putObject(request);
-            kafkaManager.publish(new ResourceEvent(musicResource.getId()));
+            s3.putObject(request);
+            kafkaManager.publishCallback(new ResourceEvent(musicResource.getId()));
             return new RecordId(musicResource.getId());
         } catch (Exception e) {
             e.printStackTrace();
